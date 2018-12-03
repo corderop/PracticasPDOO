@@ -1,4 +1,6 @@
-/*
+/**
+ * Practica de:
+ * 
  * Francisco Beltrán Sánchez
  * Pablo Cordero Romero
  */
@@ -31,13 +33,7 @@ public class PruebaQytetet {
     }
     
     public static void main(String[] args) {
+        juego.inicializarJuego(PruebaQytetet.getNombreJugadores());
         
-        juego.inicializarJuego(getNombreJugadores());
-        
-        for (int i=0 ; i<juego.getJugadores().size() ; i++){
-            System.out.println(juego.getJugadores().get(i).toString());
-        }
-        System.out.println(juego.toString());
     }
-    
 }

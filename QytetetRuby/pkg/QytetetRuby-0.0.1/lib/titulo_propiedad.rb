@@ -14,23 +14,6 @@ module ModeloQytetet
     attr_reader :numHoteles
     attr_reader :numCasas
     
-=begin
-  MÉTODOS SIN IMPLEMENTAR
-  
-  def calcularCosteCancelar();
-  def calcularCosteHipotecar();
-  def calcularImporteAlquiler();
-  def calcularPrecioVenta();
-  def cancelarHipoteca();
-  def cobrarAlquiler(coste);
-  def edificarCasa();
-  def edificarHotel();
-  def hipotecar();
-  def pagarAlquiler();
-  def propietarioEncarcelado();
-  def tengoPropietario();
-=end
-    
     def initialize(nb, pCompra, aBase, fRevalorizacion, hBase, pEdificar)
       @nombre = nb
       @hipotecada = false
@@ -58,8 +41,60 @@ module ModeloQytetet
       end
     end
     
+    def propietarioEncarcelado
+      @propietario.encarcelado
+    end
+    
+    def tengoPropietario
+      @propietario!=nil
+    end
+    
+    def edificarCasa
+      @numCasas +=1
+    end
+    
+    def pagarAlquiler
+      costeAlquiler = calcularImporteAlquiler
+      @propietario.modificarSaldo(costeAlquiler)
+      
+      costeAlquiler
+    end
+    
+    def calcularImporteAlquiler
+      @alquilerBase+(@numCasas*0.5+@numHoteles*2)
+    end
+    
+    def hipotecar
+      costeHipoteca = calcularCosteHipotecar
+      @hipotecada = true
+      
+      costeHipoteca
+    end
+    
+    def calcularCosteHipotecar
+      @hipotecaBase + @numCasas*0.5 + @hipotecaBase + @numHoteles*@hipotecaBase
+    end
+    
+    def calcularPrecioVenta
+      @precioCompra + ( @numCasas + @numHoteles ) * @precioEdificar * @factorRevalorizacion
+    end
+    
+    def edificarHotel
+      @numHoteles += 1
+      @numCasas = 0
+    end
+    
+    def calcularCosteCancelar
+      costeHipotecar = calcularCosteHipotecar
+      costeHipotecar+costeHipotecar*0.1
+    end
+    
+    def cancelarHipoteca
+      @hipotecada = false
+    end
+    
     def to_s
-      "Nombre: #{@nombre} \n Hipotecada: #{@hipotecada} \n Precio compra: #{@precioCompra} \n Alquiler base: #{@alquilerBase} \n Factor revalorizacion: #{@factorRevalorizacion} \n Hipoteca base: #{@hipotecaBase} \n Precio edificar: #{@precioEdificar} \n Numero hoteles: #{@numHoteles} \n Numero casas: #{@numCasas} \n Propietario: #{@propietario}"
+      "Nombre: #{@nombre} \n Hipotecada: #{@hipotecada} \n Precio compra: #{@precioCompra} \n Alquiler base: #{@alquilerBase} \n Factor revalorizacion: #{@factorRevalorizacion} \n Hipoteca base: #{@hipotecaBase} \n Precio edificar: #{@precioEdificar} \n Numero hoteles: #{@numHoteles} \n Numero casas: #{@numCasas} \n Propietario: #{@propietario.nombre}"
     end
     
   end

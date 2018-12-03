@@ -8,16 +8,6 @@ module ModeloQytetet
     attr_reader :tipo
     attr_reader :titulo
     
-=begin
-    Métodos sin implementar
-  
-    def asignarPropietario(jugador) ... end
-    def pagarAlquiler
-    def propietarioEncarcelado ... end
-    def soyEdificable ... endl
-    def tengoPropietario ... endl
-=end
-    
     def initialize(numCas, tp, ttl)
       @numeroCasilla = numCas
       @tipo = tp
@@ -35,6 +25,27 @@ module ModeloQytetet
     def setTitulo(ttl)
       @titulo = ttl
       @precioCompra = ttl.precioCompra
+    end
+    
+    def soyEdificable  
+      @tipo==TipoCasilla::CALLE
+    end
+    
+    def tengoPropietario
+      @titulo.tengoPropietario
+    end
+    
+    def propietarioEncarcelado
+      @titulo.propietarioEncarcelado
+    end
+    
+    def asignarPropietario(jugador)
+      @titulo.propietario = jugador;
+      @titulo
+    end
+    
+    def pagarAlquiler
+      @titulo.pagarAlquiler
     end
     
     def to_s

@@ -1,4 +1,6 @@
-/*
+/**
+ * Practica de:
+ * 
  * Francisco Beltrán Sánchez
  * Pablo Cordero Romero
  */
@@ -9,16 +11,6 @@ public class Casilla {
     private int coste;
     private TipoCasilla tipo;
     private TituloPropiedad titulo;
-    
-    /**
-     * MÉTODOS SIN IMPLEMENTAR
-     * 
-     * TituloPropiedad asignarPropietario(Jugador jugador);
-     * int pagarAlquiler();
-     * boolean propietarioEncarcelado();
-     * boolean soyEdificable();
-     * boolean tengoPropietario();
-     */
 
     // Constructores para casillas que no son calle
     Casilla(int numeroCasilla, TipoCasilla tipo){
@@ -54,6 +46,28 @@ public class Casilla {
         this.coste = this.titulo.getPrecioCompra();
     }
     
+    boolean soyEdificable(){
+        return this.tipo==TipoCasilla.CALLE;
+    }
+    
+    boolean tengoPropietario(){
+        return this.titulo.tengoPropietario();
+    }
+    
+    boolean propietarioEncarcelado(){
+        return this.titulo.propietarioEncarcelado();
+    }
+    
+    TituloPropiedad asignarPropietario(Jugador jugador){
+        titulo.setPropietario(jugador);
+
+        return titulo;
+    }
+    
+    int pagarAlquiler(){
+        return titulo.pagarAlquiler();
+    }
+
     @Override
     public String toString() {
         if(this.tipo==TipoCasilla.CALLE)

@@ -1,4 +1,6 @@
-/*
+/**
+ * Practica de:
+ * 
  * Francisco Beltrán Sánchez
  * Pablo Cordero Romero
  */
@@ -8,14 +10,6 @@ import java.util.ArrayList;
 public class Tablero {
     private ArrayList<Casilla> casillas;
     private Casilla carcel;
-    
-    /**
-     * MÉTODOS SIN IMPLEMENTAR
-     * 
-     * boolean esCasillaCarcel(int numeroCasilla);
-     * Casilla obtenerCasillaFinal(Casilla casilla, int desplazamiento);
-     * Casilla obtenerCasillaNumero( int numeroCasilla );
-     */
 
     Tablero() {
         inicializar();
@@ -53,6 +47,27 @@ public class Tablero {
         casillas.add(new Casilla(17, new TituloPropiedad("Calle Tesoro de la Aliseda", 1000, 100, -15, 850, 750)));
         casillas.add(new Casilla(18, TipoCasilla.PARKING));
         casillas.add(new Casilla(19, new TituloPropiedad("Av de Cristóbal Colón", 1000, 100, -20, 1000, 750)));
+    }
+    
+    boolean esCasillaCarcel(int numeroCasilla){
+        return (numeroCasilla == carcel.getNumeroCasilla());
+    }
+    
+    Casilla obtenerCasillaNumero( int numeroCasilla ){
+        assert (numeroCasilla > 0 && numeroCasilla < casillas.size());
+        return casillas.get(numeroCasilla);
+    }
+    
+    Casilla obtenerCasillaFinal(Casilla casilla, int desplazamiento){
+        Casilla retorno = null;
+        
+        for(int i=0 ; i<=casillas.size() && retorno==null ; i++){
+            if(casillas.get(i) == casilla)
+                retorno = casillas.get((i+desplazamiento)%casillas.size());  
+        }
+        
+        assert retorno != null;
+        return retorno;
     }
 
     @Override

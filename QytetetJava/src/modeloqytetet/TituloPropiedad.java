@@ -1,4 +1,6 @@
-/*
+/**
+ * Practica de:
+ * 
  * Francisco Beltrán Sánchez
  * Pablo Cordero Romero
  */
@@ -15,23 +17,6 @@ public class TituloPropiedad {
     private int precioCompra;
     private int precioEdificar;
     private Jugador propietario = null;
-    
-    /**
-     * MÉTODOS SIN IMPLEMENTAR
-     * 
-     * int calcularCosteCancelar();
-     * int calcularCosteHipotecar();
-     * int calcularImporteAlquiler();
-     * int calcularPrecioVenta();
-     * void cancelarHipoteca();
-     * void cobrarAlquiler(int coste);
-     * void edificarCasa();
-     * void edificarHotel();
-     * int hipotecar();
-     * int pagarAlquiler();
-     * boolean propietarioEncarcelado();
-     * boolean tengoPropietario();
-     */
     
     TituloPropiedad(String nombre, int pCompra, int aBase, float fRevalorizacion, int hBase, int pEdificar) {
         this.nombre = nombre;
@@ -101,6 +86,58 @@ public class TituloPropiedad {
         this.propietario = propietario;
     }
     // get y set ---------------------------
+    
+    boolean propietarioEncarcelado(){
+        return propietario.getEncarcelado();
+    }
+    
+    boolean tengoPropietario(){
+        return propietario!=null;
+    }
+    
+    void edificarCasa(){
+        numCasas += 1;
+    }
+    
+    int pagarAlquiler(){
+        int costeAlquiler = calcularImporteAlquiler();
+        propietario.modificarSaldo(costeAlquiler);
+
+        return costeAlquiler;
+    }
+
+    int calcularImporteAlquiler(){
+        return (int) (alquilerBase + (numCasas*0.5 + numHoteles*2));
+    }
+    
+    int hipotecar(){
+        int costeHipoteca = calcularCosteHipotecar();
+        setHipotecada(true);
+
+        return costeHipoteca;
+    }
+    
+    int calcularCosteHipotecar(){
+        return (int) (hipotecaBase + numCasas*0.5 + hipotecaBase + numHoteles*hipotecaBase);
+    }
+
+    int calcularPrecioVenta(){
+        return (int) (precioCompra + ( numCasas + numHoteles ) * precioEdificar * factorRevalorizacion);
+    }
+    
+    void edificarHotel(){
+        numHoteles += 1;
+        numCasas = 0;
+    }
+    
+    int calcularCosteCancelar(){
+        int costeHipotecar = calcularCosteHipotecar();
+        return (int) (costeHipotecar + costeHipotecar*0.1);
+    }
+    
+    void cancelarHipoteca(){
+        hipotecada = false;
+    }
 
     @Override
     public String toString() {

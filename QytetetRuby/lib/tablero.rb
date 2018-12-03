@@ -6,14 +6,6 @@ module ModeloQytetet
     attr_reader :casillas
     attr_reader :carcel
     
-=begin
-  MÉTODOS SIN IMPLEMENTAR
-
-  def esCasillaCarcel(int numeroCasilla);
-  def obtenerCasillaFinal(Casilla casilla, int desplazamiento);
-  def obtenerCasillaNumero( int numeroCasilla );
-=end
-    
     def initialize
       inicializar
     end
@@ -42,6 +34,29 @@ module ModeloQytetet
       @casillas<< Casilla.new(17, TipoCasilla::CALLE, TituloPropiedad.new("Calle Tesoro de la Aliseda", 1000, 100, -15, 850, 750))
       @casillas<< Casilla.new2(18, TipoCasilla::PARKING)
       @casillas<< Casilla.new(19, TipoCasilla::CALLE, TituloPropiedad.new("Av de Cristóbal Colón", 1000, 100, -20, 1000, 750))
+    end
+    
+    def esCasillaCarcel(numeroCasilla)
+      numeroCasilla==@carcel.numeroCasilla
+    end
+    
+    def obtenerCasillaNumero(numeroCasilla)
+      fail if (numeroCasilla<0 && numeroCasilla>@casillas.size)
+      @casillas[numeroCasilla]
+    end
+    
+    def obtenerCasillaFinal(casilla, desplazamiento)
+      retorno = nil
+      
+      for i in 0..@casillas.size do
+        if(retorno == nil)
+          if @casillas[i]==casilla
+            retorno = @casillas[(i+desplazamiento)% @casillas.size]
+          end
+        end
+      end
+      fail if retorno==nil
+      retorno
     end
     
     def to_s

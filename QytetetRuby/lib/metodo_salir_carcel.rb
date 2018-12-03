@@ -2,7 +2,7 @@
 # Francisco Beltrán Sánchez
 # Pablo Cordero Romero
 module ModeloQytetet
-  module TipoCasilla
+  module MetodoSalirCarcel
     TIRANDODADO = :tirandoDado
     PAGANDOLIBERTAD = :pagandoLibertad
   end

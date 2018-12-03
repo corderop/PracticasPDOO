@@ -10,6 +10,7 @@ require_relative "sorpresa"
 require_relative "qytetet"
 require_relative "tablero"
 require_relative "casilla"
+require_relative "estado_juego"
 require_relative "titulo_propiedad"
   
 module ModeloQytetet
@@ -41,11 +42,6 @@ module ModeloQytetet
     def self.main
       @@juego.inicializarJuego(getNombresJugadores)
       
-      for i in 0..@@juego.jugadores.size
-        puts @@juego.jugadores[i].to_s
-      end
-      
-      puts @@juego.to_s
     end
   end
   

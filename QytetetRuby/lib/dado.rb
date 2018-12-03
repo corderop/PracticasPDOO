@@ -8,14 +8,13 @@ module ModeloQytetet
     include Singleton
     attr_reader :valor
     
-=begin
-    MÉTODOS SIN INICIALIZAR
-
-    def tirar ... end
-=end   
- 
     def initialize
        @valor
+    end
+    
+    def tirar
+      @valor = rand(1..6)
+      @valor
     end
     
     def to_s

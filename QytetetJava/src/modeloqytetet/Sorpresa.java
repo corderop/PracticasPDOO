@@ -1,4 +1,6 @@
-/*
+/**
+ * Practica de:
+ * 
  * Francisco Beltrán Sánchez
  * Pablo Cordero Romero
  */
