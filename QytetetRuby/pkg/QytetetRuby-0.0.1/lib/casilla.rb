@@ -4,56 +4,27 @@
 module ModeloQytetet
   class Casilla
     attr_reader :numeroCasilla
-    attr_reader :precioCompra
-    attr_reader :tipo
-    attr_reader :titulo
-    
-    def initialize(numCas, tp, ttl)
+    attr_accessor :precioCompra
+
+    def initialize(numCas, coste)
       @numeroCasilla = numCas
-      @tipo = tp
-      @precioCompra = 0
-      if !ttl.nil?
-        setTitulo(ttl);
-      end
+      @precioCompra = coste
     end
     
-    def self.new2(numCas, tp)
-      self.new(numCas, tp, nil)
+    def self.copia(casilla)
+      self.new(casilla.numeroCasilla, casilla.precioCompra)
     end
-    
-    # Metodo privatizado más abajo
+
+    # Dejamos este método ya que no podemos modificar precioCompra desde calle
     def setTitulo(ttl)
-      @titulo = ttl
       @precioCompra = ttl.precioCompra
     end
-    
-    def soyEdificable  
-      @tipo==TipoCasilla::CALLE
-    end
-    
-    def tengoPropietario
-      @titulo.tengoPropietario
-    end
-    
-    def propietarioEncarcelado
-      @titulo.propietarioEncarcelado
-    end
-    
-    def asignarPropietario(jugador)
-      @titulo.propietario = jugador;
-      @titulo
-    end
-    
-    def pagarAlquiler
-      @titulo.pagarAlquiler
-    end
-    
+
+    def soyEdificable; end
+    def tengoPropietario; end
+
     def to_s
-      if(@tipo==TipoCasilla::CALLE)
-        "Casilla: \n Número #{@numeroCasilla} \n Coste: #{@precioCompra} \n Tipo: #{@tipo} \n Titulo: #{@titulo} \n"
-      else
-        "Casilla: \n Número #{@numeroCasilla} \n Tipo: #{@tipo} \n"
-      end
+        "\n-----\nCasilla: \n\tnumeroCasilla= #{@numeroCasilla} \n\tprecioCompra= #{@precioCompra}";
     end
     
     private :setTitulo

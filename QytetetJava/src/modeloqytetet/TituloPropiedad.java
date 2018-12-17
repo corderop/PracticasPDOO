@@ -127,7 +127,7 @@ public class TituloPropiedad {
     
     void edificarHotel(){
         numHoteles += 1;
-        numCasas = 0;
+        numCasas -= 4;
     }
     
     int calcularCosteCancelar(){
@@ -141,6 +141,6 @@ public class TituloPropiedad {
 
     @Override
     public String toString() {
-        return "TituloPropiedad{" + "nombre=" + nombre + ", hipotecada=" + hipotecada + ", precioCompra=" + precioCompra + ", alquilerBase=" + alquilerBase + ", factorRevalorizacion=" + factorRevalorizacion + ", hipotecaBase=" + hipotecaBase + ", precioEdificar=" + precioEdificar + ", numHoteles=" + numHoteles + ", numCasas=" + numCasas + '}';
+        return "\n\tTituloPropiedad" + "\n\t\tnombre=" + nombre + "\n\t\thipotecada=" + hipotecada + "\n\t\tprecioCompra=" + precioCompra + "\n\t\talquilerBase=" + alquilerBase + "\n\t\tfactorRevalorizacion=" + factorRevalorizacion + "\n\t\thipotecaBase=" + hipotecaBase + "\n\t\tprecioEdificar=" + precioEdificar + "\n\t\tnumHoteles=" + numHoteles + "\n\t\tnumCasas=" + numCasas;
     }    
 }

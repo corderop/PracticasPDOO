@@ -81,7 +81,7 @@ module ModeloQytetet
     
     def edificarHotel
       @numHoteles += 1
-      @numCasas = 0
+      @numCasas -= 4
     end
     
     def calcularCosteCancelar
@@ -94,7 +94,7 @@ module ModeloQytetet
     end
     
     def to_s
-      "Nombre: #{@nombre} \n Hipotecada: #{@hipotecada} \n Precio compra: #{@precioCompra} \n Alquiler base: #{@alquilerBase} \n Factor revalorizacion: #{@factorRevalorizacion} \n Hipoteca base: #{@hipotecaBase} \n Precio edificar: #{@precioEdificar} \n Numero hoteles: #{@numHoteles} \n Numero casas: #{@numCasas} \n Propietario: #{@propietario.nombre}"
+      "Nombre: #{@nombre} \n Hipotecada: #{@hipotecada} \n Precio compra: #{@precioCompra} \n Alquiler base: #{@alquilerBase} \n Factor revalorizacion: #{@factorRevalorizacion} \n Hipoteca base: #{@hipotecaBase} \n Precio edificar: #{@precioEdificar} \n Numero hoteles: #{@numHoteles} \n Numero casas: #{@numCasas}\n"
     end
     
   end

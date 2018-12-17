@@ -30,4 +30,9 @@ public class Dado {
     public static Dado getInstance(){
         return instance;
     }
+    
+    @Override
+    public String toString() {
+        return "\n------\nTablero" + "\n\tvalor=" + valor ;
+    }
 }

@@ -15,7 +15,7 @@ public class Qytetet {
     private static final Qytetet instance = new Qytetet();
  
     public static final int MAX_JUGADORES = 4;
-    static final int NUM_SORPRESAS = 10;
+    static final int NUM_SORPRESAS = 12;
     public static final int NUM_CASILLAS = 20;
     static final int PRECIO_LIBERTAD = 200;
     static final int SALDO_SALIDA = 1000;
@@ -26,7 +26,7 @@ public class Qytetet {
     private Dado dado = Dado.getInstance();
     private EstadoJuego estadoJuego;
     private Jugador jugadorActual;
-    private ArrayList<Jugador> jugadores = new ArrayList<>(0); 
+    private ArrayList<Jugador> jugadores = new ArrayList<>(); 
     
     // Declaración del constructor privado ya que la clase es de tipo
     // singleton, y se declarará fuera de la clase con el método getInstance
@@ -37,6 +37,10 @@ public class Qytetet {
         return instance;
     }
     
+    public EstadoJuego getEstadoJuego(){
+        return estadoJuego;
+    }
+    
     public Sorpresa getCartaActual(){
         return cartaActual;
     }
@@ -45,11 +49,11 @@ public class Qytetet {
         return dado;
     }
     
-    Jugador getJugadorActual(){
+    public Jugador getJugadorActual(){
         return jugadorActual;
     }
     
-    ArrayList<Jugador> getJugadores(){
+    public ArrayList<Jugador> getJugadores(){
         return jugadores;
     }
     
@@ -61,7 +65,7 @@ public class Qytetet {
         return mazo;
     }
     
-    /*private*/ void setCartaActual( Sorpresa cartaActual ){
+    private void setCartaActual( Sorpresa cartaActual ){
         this.cartaActual = cartaActual;
     }
     
@@ -85,7 +89,8 @@ public class Qytetet {
     
     private void inicializarJugadores(ArrayList<String> nombres){
         for( int i=0 ; i<nombres.size() ; i++){
-            jugadores.add(new Jugador(nombres.get(i), tablero.getCasillas().get(0), new ArrayList<>(0)));
+            jugadores.add(new Jugador(nombres.get(i)));
+            jugadores.get(i).setCasillaActual(tablero.obtenerCasillaNumero(0));
         }
     }
     
@@ -94,9 +99,9 @@ public class Qytetet {
     }
     
     private void inicializarCartasSorpresa(){
-        mazo.add(new Sorpresa ("¡Has ganado el euromillón!", 100, TipoSorpresa.PAGARCOBRAR));
-        mazo.add(new Sorpresa ("Le debes dinero a hacienda", -100, TipoSorpresa.PAGARCOBRAR));
-        mazo.add(new Sorpresa ("¡Ve a la cárcel!", tablero.getCarcel().getNumeroCasilla(), TipoSorpresa.IRACASILLA));
+        mazo.add(new Sorpresa ("¡Has ganado el euromillón!", 100, TipoSorpresa.PAGARCOBRAR));//
+        mazo.add(new Sorpresa ("Le debes dinero a hacienda", -100, TipoSorpresa.PAGARCOBRAR));//
+        mazo.add(new Sorpresa ("¡Ve a la cárcel!", tablero.getCarcel().getNumeroCasilla(), TipoSorpresa.IRACASILLA));//
         mazo.add(new Sorpresa ("Tienes un congreso, ve a la casilla 8. Si pasas por la salida cobra el dinero correspondiente", 8, TipoSorpresa.IRACASILLA));
         mazo.add(new Sorpresa ("Ve a la salida", 0, TipoSorpresa.IRACASILLA));
         mazo.add(new Sorpresa ("Cobra por el mantenimiento de cada casa o hotel que tengas en propiedad", 100, TipoSorpresa.PORCASAHOTEL));
@@ -104,6 +109,9 @@ public class Qytetet {
         mazo.add(new Sorpresa ("¡Se un poco más generoso!", 150, TipoSorpresa.PORJUGADOR));
         mazo.add(new Sorpresa ("¡Cobrales a tus contrincantes!", -150, TipoSorpresa.PORJUGADOR));
         mazo.add(new Sorpresa ("Carta de libertad. Puedes usar esta carta para salir de la cárcel", 0, TipoSorpresa.SALIRCARCEL));
+        mazo.add(new Sorpresa ("¡Es la carta del especulador!", 3000, TipoSorpresa.CONVERTIRME));
+        mazo.add(new Sorpresa ("¡Es la carta del especulador!", 5000, TipoSorpresa.CONVERTIRME));
+        Collections.shuffle(mazo);
     }
     
     public void siguienteJugador(){
@@ -153,6 +161,10 @@ public class Qytetet {
     
     public void obtenerRanking(){
         Collections.sort(jugadores);
+        System.out.println("-------------------");
+        for(int i=0;i<jugadores.size();i++)
+            System.out.println((i+1)+". "+jugadores.get(i).getNombre()+" capital->"+jugadores.get(i).obtenerCapital());
+        System.out.println("-------------------");
     }
     
     public int obtenerSaldoJugadorActual(){
@@ -246,6 +258,12 @@ public class Qytetet {
                     }
                 }
             }
+            else if(cartaActual.getTipo() == TipoSorpresa.CONVERTIRME){
+                int i = jugadores.indexOf(jugadorActual);
+                Especulador nuevo = jugadorActual.convertirme(cartaActual.getValor());
+                jugadores.set(i, nuevo);
+                jugadorActual = nuevo;
+            }
         }
     }
     
@@ -274,15 +292,17 @@ public class Qytetet {
     }
     
     private void encarcelarJugador(){
-        if(!jugadorActual.tengoCartaLibertad()){
+        if(jugadorActual.deboIrACarcel()){
             Casilla casillaCarcel = tablero.getCarcel();
             jugadorActual.irACarcel(casillaCarcel);
             setEstadoJuego(EstadoJuego.JA_ENCARCELADO);
         }
         else{
-            Sorpresa carta = jugadorActual.devolverCartaLibertad();
-            mazo.add(carta);
-            setEstadoJuego(EstadoJuego.JA_PUEDEGESTIONAR);
+            if(jugadorActual.getCartaLibertad() != null){
+                Sorpresa carta = jugadorActual.devolverCartaLibertad();
+                mazo.add(carta);
+            }
+                setEstadoJuego(EstadoJuego.JA_PUEDEGESTIONAR);
         }
     }
     
@@ -350,7 +370,7 @@ public class Qytetet {
         boolean edificado = false;
 
         Casilla casilla = tablero.obtenerCasillaNumero(numeroCasilla);
-        if(casilla.getTipo() == TipoCasilla.CALLE && casilla.getTitulo().getNumCasas() == 4){
+        if(casilla.getTipo() == TipoCasilla.CALLE && casilla.getTitulo().getNumCasas() >= 4){
             TituloPropiedad titulo = casilla.getTitulo();
             edificado = jugadorActual.edificarHotel(titulo);
             if(edificado)
@@ -366,6 +386,6 @@ public class Qytetet {
 
     @Override
     public String toString() {
-        return "Qytetet{" + "cartaActual=" + cartaActual + ", mazo=" + mazo + ", tablero=" + tablero + ", dado=" + dado + ", jugadorActual=" + jugadorActual + ", jugadores=" + jugadores + '}';
+        return "\n-----\nQytetet" + "\n\tcartaActual=" + cartaActual + "\n-----\n\tmazo=" + mazo + "\n-----\n\ttablero=" + tablero + "\n-----\n\tdado=" + dado + "\n-----\n\tjugadorActual=" + jugadorActual + "\n------\n\tjugadores=" + jugadores;
     }
 }

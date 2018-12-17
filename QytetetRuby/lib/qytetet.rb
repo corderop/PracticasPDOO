@@ -1,6 +1,19 @@
 #encoding: utf-8
 # Francisco Beltrán Sánchez
 # Pablo Cordero Romero
+require_relative "tipo_sorpresa"
+require_relative "dado"
+require_relative "jugador"
+require_relative "metodo_salir_carcel"
+require_relative "tipo_casilla"
+require_relative "sorpresa"
+require_relative "tablero"
+require_relative "casilla"
+require_relative "estado_juego"
+require_relative "titulo_propiedad"
+require_relative "especulador"
+require_relative "otraCasilla"
+require_relative "calle"
 require "singleton"
 
 module ModeloQytetet
@@ -18,9 +31,10 @@ module ModeloQytetet
     attr_reader :jugadorActual
     attr_reader :jugadores
     attr_reader :tablero
+    attr_reader :estadoJuego
       
     @@MAX_JUGADORES = 4
-    @@NUM_SORPRESAS = 10
+    @@NUM_SORPRESAS = 12
     @@NUM_CASILLAS = 20
     @@PRECIO_LIBERTAD = 200
     @@SALDO_SALIDA = 1000
@@ -36,14 +50,15 @@ module ModeloQytetet
     
     def inicializarJuego(nombres)
       inicializarTablero
-      inicializarJugadores(nombres)
       inicializarCartasSorpresa
+      inicializarJugadores(nombres)
       salidaJugadores
     end
     
     def inicializarJugadores(nombres)
-      for i in 0..nombres.size
-        @jugadores << Jugador.new(nombres[i], @tablero.casillas[0], Array.new)
+      for i in 0..nombres.size-1
+        @jugadores << Jugador.new(nombres[i])
+        @jugadores[i].casillaActual = @tablero.obtenerCasillaNumero(0)
       end
     end
     
@@ -52,16 +67,19 @@ module ModeloQytetet
     end
 
     def inicializarCartasSorpresa
-      @mazo<< Sorpresa.new("¡Has ganado el euromillón!", 100, TipoSorpresa::PAGARCOBRAR)
-      @mazo<< Sorpresa.new("Le debes dinero a hacienda", -100, TipoSorpresa::PAGARCOBRAR)
-      @mazo<< Sorpresa.new("¡Ve a la cárcel!", @tablero.carcel.numeroCasilla, TipoSorpresa::IRACASILLA)
-      @mazo<< Sorpresa.new("Tienes un congreso, ve a la casilla 8. Si pasas por la salida cobra el dinero correspondiente", 8, TipoSorpresa::IRACASILLA)
-      @mazo<< Sorpresa.new("Ve a la salida", 0, TipoSorpresa::IRACASILLA)
-      @mazo<< Sorpresa.new("Cobra por el mantenimiento de cada casa o hotel que tengas en propiedad", 100, TipoSorpresa::PORCASAHOTEL)
-      @mazo<< Sorpresa.new("Paga los impuesto por cada casa o hotel que tengas en propiedad", -100, TipoSorpresa::PORCASAHOTEL)
-      @mazo<< Sorpresa.new("¡Se un poco más generoso!", 150, TipoSorpresa::PORJUGADOR)
-      @mazo<< Sorpresa.new("¡Cobrales a tus contrincantes!", -150, TipoSorpresa::PORJUGADOR)
+      @mazo<< Sorpresa.new("¡Has ganado el euromillón!", 100, TipoSorpresa::PAGARCOBRAR)##
+      @mazo<< Sorpresa.new("Le debes dinero a hacienda", -100, TipoSorpresa::PAGARCOBRAR)##
+      @mazo<< Sorpresa.new("¡Ve a la cárcel!", @tablero.carcel.numeroCasilla, TipoSorpresa::IRACASILLA)##
+      @mazo<< Sorpresa.new("Tienes un congreso, ve a la casilla 8. Si pasas por la salida cobra el dinero correspondiente", 8, TipoSorpresa::IRACASILLA)##
+      @mazo<< Sorpresa.new("Ve a la salida", 0, TipoSorpresa::IRACASILLA)##
+      @mazo<< Sorpresa.new("Cobra por el mantenimiento de cada casa o hotel que tengas en propiedad", 100, TipoSorpresa::PORCASAHOTEL)##
+      @mazo<< Sorpresa.new("Paga los impuesto por cada casa o hotel que tengas en propiedad", -100, TipoSorpresa::PORCASAHOTEL)##
+      @mazo<< Sorpresa.new("¡Se un poco más generoso!", 150, TipoSorpresa::PORJUGADOR)##
+      @mazo<< Sorpresa.new("¡Cobrales a tus contrincantes!", -150, TipoSorpresa::PORJUGADOR)##
       @mazo<< Sorpresa.new("Carta de libertad. Puedes usar esta carta para salir de la cárcel", 0, TipoSorpresa::SALIRCARCEL)
+      @mazo<< Sorpresa.new("¡Es la carta del especulador!", 3000, TipoSorpresa::CONVERTIRME)##
+      @mazo<< Sorpresa.new("¡Es la carta del especulador!", 5000, TipoSorpresa::CONVERTIRME)##
+      @mazo=@mazo.shuffle
     end
     
     def setEstadoJuego(stdJg)
@@ -120,7 +138,12 @@ module ModeloQytetet
     end
     
     def obtenerRanking
-      @jugadores=@jugadores.sort
+      aux=@jugadores.sort
+      puts "-------------------"
+      for i in 0...aux.size do
+        puts "#{i+1}. #{aux[i].nombre} capital->#{aux[i].obtenerCapital}"
+      end
+      puts "-------------------"
     end
     
     def obtenerSaldoJugadorActual
@@ -179,7 +202,7 @@ module ModeloQytetet
       setEstadoJuego(EstadoJuego::JA_PUEDEGESTIONAR)
       
       if(@cartaActual.tipo==TipoSorpresa::SALIRCARCEL)
-        @jugadorActual.setCartaLibertad(@cartaActual)
+        @jugadorActual.cartaLibertad = @cartaActual
       else
         @mazo<<@cartaActual
         if @cartaActual.tipo == TipoSorpresa::PAGARCOBRAR
@@ -220,6 +243,11 @@ module ModeloQytetet
               end
             end
           end
+        elsif @cartaActual.tipo == TipoSorpresa::CONVERTIRME
+          i = jugadores.index(@jugadorActual)
+          nuevo = @jugadorActual.convertirme(@cartaActual.valor)
+          @jugadores[i] = nuevo
+          @jugadorActual = nuevo
         end
       end
     end
@@ -250,13 +278,15 @@ module ModeloQytetet
     end
     
     def encarcelarJugador
-      if !@jugadorActual.tengoCartaLibertad
+      if @jugadorActual.deboIrACarcel
         casillaCarcel = @tablero.carcel
         @jugadorActual.irACarcel(casillaCarcel)
         setEstadoJuego(EstadoJuego::JA_ENCARCELADO)
       else
-        carta = @jugadorActual.devolverCartaLibertad
-        @mazo << carta
+        if @jugadorActual.cartaLibertad != nil
+          carta = @jugadorActual.devolverCartaLibertad
+          @mazo << carta
+        end
         setEstadoJuego(EstadoJuego::JA_PUEDEGESTIONAR)
       end
     end
@@ -329,7 +359,7 @@ module ModeloQytetet
       edificado = false
       
       casilla = @tablero.obtenerCasillaNumero(numeroCasilla)
-      if (casilla.tipo == TipoCasilla::CALLE && casilla.titulo.numCasas == 4)
+      if (casilla.tipo == TipoCasilla::CALLE && casilla.titulo.numCasas >= 4)
         titulo = casilla.titulo
         edificado = jugadorActual.edificarHotel(titulo)
         if edificado
@@ -345,9 +375,9 @@ module ModeloQytetet
     end
     
     def to_s
-    "Qytetet: \n Carta Actual #{@cartaActual} \n Mazo #{@mazo} \n Nombre #{@nombre} \n Tablero #{@tablero} \n Dado #{@dado} \n Jugador actual #{@jugadorActual}"
+      "\n-----\nQytetet \n\tcartaActual= #{@cartaActual} \n-----\n\tmazo= #{@mazo} \n-----\n\ttablero= #{@tablero} \n-----\n\tdado= #{@dado} \n-----\n\tjugadorActual= #{@jugadorActual} \n------\n\tjugadores= #{@jugadores}"
     end
     
-    private :salidaJugadores, :inicializarJugadores, :inicializarTablero, :inicializarCartasSorpresa
+    private :encarcelarJugador, :salidaJugadores, :inicializarJugadores, :inicializarTablero, :inicializarCartasSorpresa
   end
 end

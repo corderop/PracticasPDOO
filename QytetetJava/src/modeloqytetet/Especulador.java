@@ -1,27 +1,61 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * Practica de:
+ * 
+ * Francisco Beltrán Sánchez
+ * Pablo Cordero Romero
  */
 package modeloqytetet;
 
-public class Especulador {
+public class Especulador extends Jugador{
     private int fianza;
-    private Jugador jugador;
-    
-    protected void pagarImpuestoCantidad(int cantidad){
-        
+
+    protected Especulador(Jugador jugador, int fza){
+        super(jugador);
+        this.fianza = fza;
+    }
+
+    @Override
+    protected void pagarImpuesto(){
+        super.modificarSaldo(-super.getCasillaActual().getCoste()/2);
     }
     
-    protected int getFactorEspeculador(){
-        return ;
+    @Override
+    protected boolean deboIrACarcel(){
+        return (super.deboIrACarcel() && !pagarFianza());
+    }
+
+    @Override
+    protected Especulador convertirme(int fza){
+        return this;
     }
     
-    protected void Especulador(Jugador jugador){
+    private boolean pagarFianza(){
+        boolean salida = super.getSaldo() >= fianza;
         
+        if(salida){
+            super.modificarSaldo(-fianza);
+        }
+        
+        return salida;
     }
     
-    protected Especulador convertirme(int fianza){
-        
+    @Override
+    protected boolean puedoEdificarCasa(TituloPropiedad titulo){
+        int numCasas = titulo.getNumCasas();
+
+        return numCasas<8;
+    }
+    
+    @Override
+    protected boolean puedoEdificarHotel(TituloPropiedad titulo){
+        int numHoteles = titulo.getNumHoteles();
+        int numCasas = titulo.getNumCasas();
+
+        return (numHoteles<8 && numCasas>=4);
+    }
+
+    @Override
+    public String toString() {
+        return "\n-----\nEspeculador:" + super.toString() + "\n\tfianza=" + fianza;
     }
 }

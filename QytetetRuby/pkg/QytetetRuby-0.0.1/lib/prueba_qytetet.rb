@@ -12,6 +12,9 @@ require_relative "tablero"
 require_relative "casilla"
 require_relative "estado_juego"
 require_relative "titulo_propiedad"
+require_relative "especulador"
+require_relative "otraCasilla"
+require_relative "calle"
   
 module ModeloQytetet
   
@@ -41,7 +44,9 @@ module ModeloQytetet
       
     def self.main
       @@juego.inicializarJuego(getNombresJugadores)
+      @@juego.aplicarSorpresa()
       
+      puts @@juego
     end
   end
   

@@ -6,24 +6,21 @@
  */
 package modeloqytetet;
 
-public class Casilla {
+public abstract class Casilla {
     private int numeroCasilla = 0;
     private int coste;
-    private TipoCasilla tipo;
-    private TituloPropiedad titulo;
 
-    // Constructores para casillas que no son calle
-    Casilla(int numeroCasilla, TipoCasilla tipo){
-        this.tipo = tipo;
+    // Constructores con parámetros para casilla
+    Casilla(int numeroCasilla, int coste){
+        this.coste = coste;
         this.numeroCasilla = numeroCasilla;
     }
-    
-    //Constructor para casilla que son calle
-    Casilla(int numeroCasilla, TituloPropiedad titulo) {
-        this.numeroCasilla = numeroCasilla;
-        this.tipo = TipoCasilla.CALLE;
-        setTitulo(titulo);
-    }
+
+    // Constructor copia casilla
+//    Casilla(Casilla casilla){
+//        this.numeroCasilla = casilla.numeroCasilla;
+//        this.coste = casilla.coste;
+//    }   
 
     int getNumeroCasilla() {
         return numeroCasilla;
@@ -33,47 +30,18 @@ public class Casilla {
         return coste;
     }
 
-    TipoCasilla getTipo() {
-        return tipo;
+    public void setCoste(int coste){
+        this.coste = coste;
     }
 
-    TituloPropiedad getTitulo() {
-        return titulo;
-    }
-
-    private void setTitulo(TituloPropiedad tp){
-        this.titulo = tp;
-        this.coste = this.titulo.getPrecioCompra();
-    }
-    
-    boolean soyEdificable(){
-        return this.tipo==TipoCasilla.CALLE;
-    }
-    
-    boolean tengoPropietario(){
-        return this.titulo.tengoPropietario();
-    }
-    
-    boolean propietarioEncarcelado(){
-        return this.titulo.propietarioEncarcelado();
-    }
-    
-    TituloPropiedad asignarPropietario(Jugador jugador){
-        titulo.setPropietario(jugador);
-
-        return titulo;
-    }
-    
-    int pagarAlquiler(){
-        return titulo.pagarAlquiler();
-    }
+    protected abstract TituloPropiedad getTitulo();
+    protected abstract TipoCasilla getTipo();
+    protected abstract boolean soyEdificable();
+    public abstract boolean tengoPropietario();
 
     @Override
     public String toString() {
-        if(this.tipo==TipoCasilla.CALLE)
-            return "Casilla{" + "numeroCasilla=" + numeroCasilla + ", precioCompra=" + coste + ", tipo=" + tipo + ", titulo=" + titulo + '}';
-        else
-            return "Casilla{" + "numeroCasilla=" + numeroCasilla + ", tipo=" + tipo + '}';
+        return "\n-----\nCasilla:" + "\n\tnumeroCasilla=" + numeroCasilla + "\n\tprecioCompra=" + coste;
     }
     
 }

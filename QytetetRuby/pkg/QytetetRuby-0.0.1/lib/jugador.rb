@@ -1,7 +1,6 @@
 #encoding: utf-8
 # Francisco Beltrán Sánchez
 # Pablo Cordero Romero
-
 module ModeloQytetet
   class Jugador
     attr_accessor :encarcelado
@@ -11,15 +10,23 @@ module ModeloQytetet
     attr_reader :saldo
     attr_reader :propiedades
     
-    def initialize(nmbr, cActual, prpdds)
+    def initialize(nmbr, cActual=nil, prpdds=Array.new, encarc=false, sald=7500, cartaLib=nil)
       @nombre = nmbr
       @casillaActual = cActual
       @propiedades = prpdds
-      @encarcelado = false
-      @saldo = 7500
-      @cartaLibertad = nil
+      @encarcelado = encarc
+      @saldo = sald
+      @cartaLibertad = cartaLib
     end
     
+    def self.copia(unJugador)
+      self.new(unJugador.nombre, unJugador.casillaActual, unJugador.propiedades, unJugador.encarcelado, unJugador.saldo, unJugador.cartaLibertad)
+    end
+
+#    def self.nuevo(nombre)
+#      self.new(nombre)
+#    end
+
     def cuantasCasasHotelesTengo
       suma = 0
       
@@ -105,10 +112,9 @@ module ModeloQytetet
     end
     
     def edificarCasa(titulo)
-      numCasas = titulo.numCasas
       edificada = false
       
-      if numCasas<4
+      if puedoEdificarCasa(titulo)
         costeEdificarCasa = titulo.precioEdificar
         tengoSaldo = tengoSaldo(costeEdificarCasa)
         if tengoSaldo
@@ -176,10 +182,9 @@ module ModeloQytetet
     end
     
     def edificarHotel(titulo)
-      numHoteles = titulo.numHoteles
       edificado = false
       
-      if numHoteles<4
+      if puedoEdificarHotel(titulo)
         costeEdificarHotel = titulo.precioEdificar
         tengoSaldo = tengoSaldo(costeEdificarHotel)
         if tengoSaldo
@@ -204,15 +209,48 @@ module ModeloQytetet
       
       cancelada
     end
+
+    def convertirme(fianza)
+      salida = Especulador.copia(self, fianza)
+
+      salida
+    end
+
+    def deboIrACarcel
+      salida = !tengoCartaLibertad
+
+      salida
+    end
+
+    def puedoEdificarCasa(titulo)
+      salida = titulo.numCasas<4;
+
+      salida
+    end
+
+    def puedoEdificarHotel(titulo)
+      salida = (titulo.numHoteles<4 && titulo.numCasas==4)
+
+      salida
+    end
     
     def to_s
       "Jugador: Nombre #{@nombre} \n Casilla actual #{@casillaActual} \n Propiedades #{@propiedades} \n Encarcelado #{@encarcelado} \n Saldo #{@saldo} \n Carta de libertad #{@cartaLibertad}"
     end
     
     def <=>(otroJugador)
-      otroJugador.obtenerCapital <=> obtenerCapital
+      otro_capital = otroJugador.obtenerCapital
+      mi_capital = obtenerCapital
+      
+      if (otro_capital>mi_capital)
+        return 1 end
+      
+      if (otro_capital<mi_capital)
+        return -1 end
+      
+      return 0
     end
 
-    private :eliminarDeMisPropiedades, :esDeMiPropiedad, :tengoSaldo
+    private :eliminarDeMisPropiedades, :esDeMiPropiedad
   end
 end

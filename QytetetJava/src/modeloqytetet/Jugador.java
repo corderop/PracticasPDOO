@@ -15,10 +15,28 @@ public class Jugador implements Comparable{
     private Casilla casillaActual;
     private ArrayList<TituloPropiedad> propiedades;
     
-    Jugador(String nombre, Casilla casillaActual, ArrayList<TituloPropiedad> propiedades){
+    Jugador(String nombre, Casilla casillaActual, ArrayList<TituloPropiedad> propiedades, boolean encarc, int sald, Sorpresa cartaLib){
         this.nombre = nombre;
         this.casillaActual = casillaActual;
         this.propiedades = propiedades;
+        this.encarcelado = encarc;
+        this.saldo = sald;
+        this.cartaLibertad = cartaLib;
+    }
+
+    protected Jugador( Jugador copia ){
+        this.encarcelado = copia.encarcelado;
+        this.nombre = copia.nombre;
+        this.saldo = copia.saldo;
+        this.cartaLibertad = copia.cartaLibertad;
+        this.casillaActual = copia.casillaActual;
+        this.propiedades = copia.propiedades;
+    }
+
+    Jugador(String nombre){
+        this.nombre = nombre;
+        this.casillaActual = null;
+        this.propiedades = new ArrayList<>();
     }
 
     boolean getEncarcelado() {
@@ -83,7 +101,7 @@ public class Jugador implements Comparable{
         return suma;
     }
     
-    void pagarImpuesto(){
+    protected void pagarImpuesto(){
         saldo -= casillaActual.getCoste();
     }
     
@@ -117,7 +135,7 @@ public class Jugador implements Comparable{
         return salida;
     }
     
-    boolean tengoSaldo(int cantidad){
+    protected boolean tengoSaldo(int cantidad){
         return saldo > cantidad;
     }
     
@@ -126,7 +144,7 @@ public class Jugador implements Comparable{
 
         int costeCompra = casillaActual.getCoste();
         if(costeCompra<saldo){
-            TituloPropiedad titulo = casillaActual.asignarPropietario(this);
+            TituloPropiedad titulo = ((Calle)casillaActual).asignarPropietario(this);
             propiedades.add(titulo);
             modificarSaldo(-costeCompra);
             comprado = true;
@@ -136,10 +154,9 @@ public class Jugador implements Comparable{
     }
     
     boolean edificarCasa(TituloPropiedad titulo){
-        int numCasas = titulo.getNumCasas();
         boolean edificada = false;
 
-        if(numCasas<4){
+        if(this.puedoEdificarCasa(titulo)){
             int costeEdificarCasa = titulo.getPrecioEdificar();
             boolean tengoSaldo = tengoSaldo(costeEdificarCasa);
             if(tengoSaldo){
@@ -167,7 +184,7 @@ public class Jugador implements Comparable{
     }
     
     void pagarAlquiler(){
-        int costeAlquiler = casillaActual.pagarAlquiler();
+        int costeAlquiler = ((Calle)casillaActual).pagarAlquiler();
         modificarSaldo(-costeAlquiler);
     }
     
@@ -210,10 +227,9 @@ public class Jugador implements Comparable{
     }
     
     boolean edificarHotel( TituloPropiedad titulo){
-        int numHoteles = titulo.getNumHoteles();
         boolean edificado = false;
 
-        if(numHoteles<4){
+        if(this.puedoEdificarHotel(titulo)){
             int costeEdificarHotel = titulo.getPrecioEdificar();
             boolean tengoSaldo = tengoSaldo(costeEdificarHotel);
             if(tengoSaldo){
@@ -239,10 +255,32 @@ public class Jugador implements Comparable{
         return cancelada;
     }
 
+    protected Especulador convertirme(int fianza){
+        Especulador salida = new Especulador(this, fianza);
+        return salida;
+    }
+
+    protected boolean deboIrACarcel(){
+        return !tengoCartaLibertad();
+    }
+
+    protected boolean puedoEdificarCasa(TituloPropiedad titulo){
+        int numCasas = titulo.getNumCasas();
+
+        return numCasas<4;
+    }
+
+    protected boolean puedoEdificarHotel(TituloPropiedad titulo){
+        int numHoteles = titulo.getNumHoteles();
+        int numCasas = titulo.getNumCasas();
+
+        return (numHoteles<4 && numCasas==4);
+    }
+
     // Modificar
     @Override
     public String toString() {
-        return "Jugador{" + "encarcelado=" + encarcelado + ", nombre=" + nombre + ", saldo=" + saldo + ", cartaLibertad=" + cartaLibertad + ", casillaActual=" + casillaActual + ", propiedades=" + propiedades + '}';
+        return "\n-----\nJugador" + "\n\tencarcelado=" + encarcelado + "\n\tnombre=" + nombre + "\n\tsaldo=" + saldo + "\n\tcartaLibertad=" + cartaLibertad + "\n\tcasillaActual=" + casillaActual + "\n-----\n\tpropiedades=" + propiedades;
     }
     
     @Override
